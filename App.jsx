@@ -22,12 +22,18 @@ const SOSApp = () => {
 
   const sendSOS = async () => {
     try {
+      const contacts = [
+        "+917972444100", // SMS only
+        "9028191439"
+        // "+919699897449", // SMS only
+      ];
+
       const response = await fetch("http://10.0.2.2:3000/send-sos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: "S.NO-140, Gurudwara Rd, Gawade Wada, Gurudwara Colony, Nigdi, Pimpri-Chinchwad, Maharashtra 411044, India ",
-          to: ["+917972444100", "+919699897449"],
+          message: "🚨 HIGH ALERT 🚨 Kunal  is in danger! 📍 Location: Bharati Vidyapeeth Campus, Pune. Act immediately!",
+          to: contacts, // Only SMS contacts
         }),
       });
 
@@ -35,10 +41,10 @@ const SOSApp = () => {
       if (data.success) {
         setModalVisible(true);
       } else {
-        alert(data.error);
+        alert("Error: " + data.error);
       }
     } catch (error) {
-      alert(error.message);
+      alert("Request Failed: " + error.message);
     }
   };
 
@@ -99,37 +105,37 @@ const SOSApp = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center", // Center everything vertically
+    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
-    paddingVertical: 20, // Adds spacing to avoid cutoff
+    paddingVertical: 20,
   },
 
   loginContainer: {
     alignItems: "center",
-    width: "80%", // Increased width for better alignment
+    width: "80%",
   },
 
   title: {
-    fontSize: 24, // Slightly reduced for better fit
+    fontSize: 24,
     fontWeight: "bold",
     marginBottom: 15,
-    textAlign: "center", // Ensures the title is centered
+    textAlign: "center",
   },
 
   input: {
-    width: "90%", // Increased width for better spacing
-    height: 45, // Reduced height to fit more elements
+    width: "90%",
+    height: 45,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 10,
     paddingHorizontal: 10,
-    marginBottom: 10, // Reduced margin for better fit
-    backgroundColor: "#f8f8f8", // Light background for better visibility
+    marginBottom: 10,
+    backgroundColor: "#f8f8f8",
   },
 
   loginButton: {
-    backgroundColor: "#007BFF", // A more modern blue shade
+    backgroundColor: "#007BFF",
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 10,
@@ -148,7 +154,7 @@ const styles = StyleSheet.create({
 
   sosButton: {
     backgroundColor: "red",
-    padding: 25, // Reduced size to fit better
+    padding: 25,
     borderRadius: 100,
     elevation: 10,
     shadowColor: "#000",
@@ -159,7 +165,7 @@ const styles = StyleSheet.create({
 
   sosText: {
     color: "white",
-    fontSize: 20, // Reduced font size for better fit
+    fontSize: 20,
     fontWeight: "bold",
   },
 
@@ -178,7 +184,7 @@ const styles = StyleSheet.create({
   },
 
   modalText: {
-    fontSize: 18, // Adjusted for smaller screens
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
   },

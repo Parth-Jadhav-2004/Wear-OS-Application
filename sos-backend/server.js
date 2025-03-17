@@ -1,7 +1,7 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const twilio = require('twilio');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const twilio = require("twilio");
 
 const app = express();
 const port = 3000;
@@ -14,30 +14,41 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
 
-// Endpoint to send SOS to multiple WhatsApp numbers
-app.post('/send-sos', async (req, res) => {
+const twilioSMSNumber = "+12762888227"; // Twilio's SMS number
+
+// 🚨 **Endpoint to send SOS via SMS**
+app.post("/send-sos", async (req, res) => {
     const { message, to } = req.body;
 
-    if (!Array.isArray(to)) {
-        return res.status(400).json({ success: false, error: "Recipient list must be an array of numbers" });
+    if (!Array.isArray(to) || to.length === 0) {
+        return res.status(400).json({ success: false, error: "Recipient list must be a non-empty array." });
     }
 
     try {
         const results = await Promise.all(
             to.map(async (number) => {
+                let formattedNumber = number.toString().trim();
+
+                // Ensure the number starts with "+"
+                if (!formattedNumber.startsWith("+")) {
+                    formattedNumber = `+${formattedNumber}`;
+                }
+
                 const response = await client.messages.create({
                     body: message,
-                    from: 'whatsapp:+14155238886', // Twilio's WhatsApp number
-                    to: `whatsapp:${number}`
+                    from: twilioSMSNumber,
+                    to: formattedNumber,
                 });
-                return { number, messageSid: response.sid };
+
+                return { recipient: formattedNumber, messageSid: response.sid, status: "Sent" };
             })
         );
 
         res.status(200).json({ success: true, results });
     } catch (error) {
+        console.error("❌ Error sending SOS:", error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-app.listen(port, () => console.log(`✅ Backend running on port ${port}`));
+app.listen(port, () => console.log(`✅ Backend running on http://localhost:${port}`));
